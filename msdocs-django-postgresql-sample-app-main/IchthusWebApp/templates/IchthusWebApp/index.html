@@ -1,0 +1,36 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'style.css' %}">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<ul class="sidenav">
+    <li><a class="active" href="/">Evenementen</a></li>
+    <li><a href="/logout_user">Uitloggen</a></li>
+</ul>
+    
+<div class="content">
+<b>Hi {{user}},</b><br><br>
+<b>Evenementen</b>
+{% if events_with_register %}
+<table>
+    <tr>
+      <th>Titel</th>
+      <th>Datum</th>
+      <th>Geregistreerd</th>
+      <th>Aantal geregistreerden</th>
+    </tr>
+    {% for event, register in events_with_register %}
+    <tr>
+        <td><p><a href="/{{event.id}}/">{{event.name}}</a></p></td>
+        <td><p>{{event.date}}</p></td>
+        <td><p>{{register}}</p></td>
+        <td><p>{{event.users.all|length}}</p></td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+    <p>Geen evenementen</p>
+{% endif %}
+</div>
+</body>

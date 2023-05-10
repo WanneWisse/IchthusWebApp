@@ -1,0 +1,109 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'style.css' %}">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <ul class="sidenav">
+        <li><a href="/">Evenementen</a></li>
+        <li><a href="/logout_user">Uitloggen</a></li>
+    </ul>
+<div class="content">
+{% if event %}
+<b>Titel</b>
+<p>{{event.name}}</p>
+<b>Locatie</b>
+<p><a href={{event.location_url}}>{{event.location_name}}</a></p>
+<b>Beschrijving</b>
+<p>{{ event.description|linebreaks}}</p>
+
+{% if registered == True %}
+<form action="/deregister_user_event" method="post">
+{% else %}
+<form action="/register_user_event" method="post">
+{% if questions %}
+<b>Vragen</b><br>
+{% for question in questions %}
+    <label>{{question.text}}</label>
+    <input name="question{{question.id}}" id="{{question.id}}"></input><br>
+{% endfor %} 
+{% endif %} 
+<br>
+{% endif %} 
+<input type="hidden" id="id" name="id" value="{{event.id}}">
+{% csrf_token %}
+
+{% if registered == True %}
+<input type="submit" value="deregisteer"></input>
+{% else %}
+<input type="submit" value="registeer"></input>
+{% endif %} 
+</form>
+{% if questions_with_answers %}
+<b>Antwoorden</b><br>
+
+{% for question, answers in questions_with_answers %}
+    <b>{{question}}</b>
+    <nav>
+    <ul>
+    {% for answer,user in answers %}
+    <li><p>{{user}} : {{answer}}</p></li>
+    {% endfor %} 
+    </ul>
+    </nav>
+{% endfor %} 
+
+{% endif %} 
+
+{% if tickies_with_answers %}
+<b>Tickies</b><br>
+{% for tickie_name, tickie_details in tickies_with_answers %}
+    <p><label>titel:</label>
+    {{tickie_name}}</p>
+    <label>url:</label>
+    <a href={{tickie_details.url}}>{{tickie_details.url}}</a><br>
+    <img src="data:image/jpeg;base64, {{tickie_details.image}}"  width="200" height="300" ><br>
+    <label>betaald?</label>
+    {% if tickie_details.user_paid %}
+        <input type="checkbox" name="checkbox" onclick="location.href='/change_paid/{{tickie_details.id}}'" checked> 
+    {%else%}
+        <input type="checkbox" name="checkbox" onclick="location.href='/change_paid/{{tickie_details.id}}'"> 
+    {% endif %} 
+    <p>Betaalde gebruikers</p>
+    <nav>
+        <ul>
+        {% for user in tickie_details.users %}
+        <li><p>{{user}}</p></li>
+        {% endfor %} 
+        </ul>
+    </nav><br>
+
+{% endfor %} 
+
+{% endif %} 
+{% else %}
+    <p>something went wrong.</p>
+{% endif %}
+<b>Creeer een tickie</b>
+<form action="/image_post" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="hidden" id="id" name="id" value="{{event.id}}">
+    <label>naam van tickie:</label>
+    <input name="name" id="name"></input><br>
+    <label>url van tickie:</label>
+    <input name="url" id="url"></input><br>
+    <div>
+      <label for="profile_pic">Screenshot van tickie</label>
+      <input
+        type="file"
+        id="file"
+        name="file"
+        accept=".jpg, .jpeg, .png" />
+    </div>
+    <div>
+      <button type="submit">Uploaden</button>
+    </div>
+  </form>
+
+</div>
+</body>

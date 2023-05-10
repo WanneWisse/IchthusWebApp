@@ -1,0 +1,16 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<form action="register_user" method="post">
+    {% csrf_token %}
+    <fieldset>
+        {% if error %}<p><strong>{{ error }}</strong></p>{% endif %}
+        <label for="username">Gebruikersnaam:</label>
+        <input type="text" id="username" name="username"><br><br>
+        <label for="password">Wachtwoord:</label>
+        <input type="password" id="password" name="password"><br><br>
+        <label for="extra_password">Extra code:</label>
+        <input type="password" id="extra_password" name="extra_password"><br><br>
+    </fieldset>
+    <input type="submit" value="register">
+    </form>
